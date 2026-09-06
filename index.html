@@ -1,0 +1,574 @@
+
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vidyakul Poll System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; font-family: 'Hind Vadodara', sans-serif; }
+    body { background: #07090e; color: #f8fafc; margin: 0; padding: 20px; display: flex; justify-content: center; }
+
+    .vidyakul-panel {
+      background: linear-gradient(160deg, #111827 0%, #0b0f19 100%);
+      border: 2px solid #1e293b;
+      border-radius: 20px;
+      width: 720px;
+      padding: 22px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 20px rgba(56, 189, 248, 0.1);
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1.5px solid #1f293d;
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f59e0b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge {
+      background: #0284c7;
+      color: #fff;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* 1. YouTube Connect */
+    .yt-connect-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1.5px dashed #38bdf8;
+      border-radius: 14px;
+      padding: 18px;
+      margin-top: 16px;
+      text-align: center;
+    }
+    .yt-input-row { display: flex; gap: 8px; margin-top: 10px; }
+    .yt-input {
+      flex: 1;
+      padding: 12px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      outline: none;
+    }
+    .yt-input:focus { border-color: #38bdf8; }
+    .btn-connect {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* 2. Controls */
+    #pollSetupSection { display: none; margin-top: 18px; }
+
+    .type-switcher { display: flex; justify-content: center; gap: 12px; margin-bottom: 16px; }
+    .switch-btn {
+      background: #1e293b;
+      border: 1.5px solid #334155;
+      color: #94a3b8;
+      padding: 8px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .switch-btn.active {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border-color: #38bdf8;
+      color: #fff;
+    }
+
+    .config-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid #1e293b;
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .sec-heading { font-size: 13px; color: #94a3b8; margin-bottom: 10px; font-weight: 600; }
+
+    .timer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .chip {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      padding: 9px;
+      text-align: center;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .chip.selected { background: #1e293b; border-color: #f59e0b; color: #f59e0b; }
+
+    .btn-start {
+      width: 100%;
+      margin-top: 18px;
+      padding: 13px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* 3. Live Running */
+    #liveSection { display: none; text-align: center; margin-top: 20px; }
+    .circle-timer { font-size: 46px; font-weight: 700; color: #38bdf8; margin: 15px 0; }
+
+    .text-field {
+      background: #0f172a;
+      border: 2px solid #38bdf8;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 16px;
+      color: white;
+      text-align: center;
+      min-width: 220px;
+      outline: none;
+      font-weight: 600;
+    }
+
+    .mcq-group { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
+    .mcq-btn { width: 52px; height: 46px; font-size: 18px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; color: white; }
+    .A { background: #ef4444; } .B { background: #3b82f6; } .C { background: #eab308; color: #000; } .D { background: #22c55e; }
+
+    /* 4. Results Screen */
+    #resultSection { display: none; margin-top: 15px; }
+    .results-layout { display: flex; gap: 18px; margin-top: 12px; }
+
+    .ratio-col { flex: 1.1; }
+    .bar-row { margin-bottom: 10px; }
+    .bar-bg {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      height: 42px;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+    }
+    .bar-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: #475569;
+      z-index: 1;
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+    .bar-text {
+      position: relative;
+      z-index: 2;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .leader-col { flex: 1.3; }
+    .rank-box {
+      background: #0b0f19;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 8px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    .rank-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      background: #111827;
+      border: 1px solid #1f293d;
+      font-size: 13px;
+    }
+    .rank-badge {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #1e293b;
+      color: #94a3b8;
+      font-weight: bold;
+      font-size: 11px;
+      margin-right: 8px;
+    }
+    .rank-1 .rank-badge { background: #f59e0b; color: #000; }
+    .rank-2 .rank-badge { background: #94a3b8; color: #000; }
+    .rank-3 .rank-badge { background: #b45309; color: #fff; }
+  </style>
+</head>
+<body>
+
+  <div class="vidyakul-panel">
+    <!-- Header -->
+    <div class="top-bar">
+      <div class="brand-title">
+        <span>⚡ Vidyakul Poll System</span>
+        <span class="badge">PRO</span>
+      </div>
+      <div id="connectionStatus" style="color: #ef4444; font-size: 13px; font-weight: 600;">● Live Disconnected</div>
+    </div>
+
+    <!-- 1. YouTube Connect -->
+    <div class="yt-connect-card" id="ytCard">
+      <div style="font-size: 14px; font-weight: 600; color: #e2e8f0;">📺 પ્રથમ સ્ટેપ: YouTube Live કનેક્ટ કરો</div>
+      <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">લાઈવ લેક્ચરની Link અથવા Video ID નાખો</div>
+      <div class="yt-input-row">
+        <input type="text" id="ytUrlInput" class="yt-input" placeholder="દા.ત. https://youtube.com/live/xxxx અથવા Video ID">
+        <button class="btn-connect" onclick="connectLiveStream()">Connect</button>
+      </div>
+    </div>
+
+    <!-- 2. Poll Settings -->
+    <div id="pollSetupSection">
+      <div class="type-switcher">
+        <button class="switch-btn active" id="btnSingle" onclick="setPollType('single')">Single Choice (MCQ)</button>
+        <button class="switch-btn" id="btnText" onclick="setPollType('text')">Word / Text / Number</button>
+      </div>
+
+      <div class="config-box">
+        <div class="sec-heading">⏱️ Select Timer Duration</div>
+        <div class="timer-grid">
+          <div class="chip selected" onclick="selectTime(30, this)">30 sec</div>
+          <div class="chip" onclick="selectTime(45, this)">45 sec</div>
+          <div class="chip" onclick="selectTime(60, this)">60 sec</div>
+          <div class="chip" onclick="selectTime(90, this)">90 sec</div>
+          <div class="chip" onclick="selectTime(120, this)">120 sec</div>
+          <div class="chip" onclick="selectTime(0, this)">Timeless</div>
+        </div>
+      </div>
+
+      <button class="btn-start" onclick="startLivePoll()">▶ Start Live Poll</button>
+    </div>
+
+    <!-- 3. Live Poll Running -->
+    <div id="liveSection">
+      <div class="circle-timer" id="timerDisplay">30s</div>
+      <div id="chatReadingNotice" style="color: #94a3b8; font-size: 13px;">🔴 YouTube Live Chat માંથી જવાબો વાંચાઈ રહ્યા છે...</div>
+
+      <!-- Text / Word Action -->
+      <div id="textAction" style="display: none; margin-top: 15px;">
+        <div style="font-size: 13px; color: #cbd5e1; margin-bottom: 6px;">સાચો જવાબ લખો:</div>
+        <div style="display: flex; gap: 8px; justify-content: center;">
+          <input type="text" id="textCorrectVal" class="text-field" placeholder="દા.ત. Himalaya અથવા 9999">
+          <button onclick="finishPoll('text')" style="background: #22c55e; border: none; font-weight: bold; border-radius: 8px; padding: 0 16px; cursor: pointer; color: black;">Show Result</button>
+        </div>
+      </div>
+
+      <!-- MCQ Action -->
+      <div id="mcqAction" style="display: none; margin-top: 15px;">
+        <div style="font-size: 13px; color: #cbd5e1;">સાચો વિકલ્પ પસંદ કરો:</div>
+        <div class="mcq-group">
+          <button class="mcq-btn A" onclick="finishPoll('A')">A</button>
+          <button class="mcq-btn B" onclick="finishPoll('B')">B</button>
+          <button class="mcq-btn C" onclick="finishPoll('C')">C</button>
+          <button class="mcq-btn D" onclick="finishPoll('D')">D</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Results Screen -->
+    <div id="resultSection">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 16px; font-weight: 700; color: #f59e0b;">📊 Poll Result Analysis</div>
+        <div id="correctBadge" style="background: #1e293b; padding: 4px 10px; border-radius: 6px; font-weight: bold; color: #38bdf8; font-size: 13px;"></div>
+      </div>
+
+      <div class="results-layout">
+        <!-- Left: Ratio Bars (Dynamic Container) -->
+        <div class="ratio-col">
+          <div style="font-size: 12px; color: #94a3b8; font-weight: 600; margin-bottom: 6px;">Responses Ratio</div>
+          <div id="dynamicRatioContainer"></div>
+        </div>
+
+        <!-- Right: Dynamic Leaderboard (Top 10 max) -->
+        <div class="leader-col">
+          <div style="font-size: 12px; color: #94a3b8; font-weight: 600; margin-bottom: 6px;">Top Responses</div>
+          <div class="rank-box" id="leaderboardBox"></div>
+        </div>
+      </div>
+
+      <button onclick="resetForNewPoll()" style="width: 100%; margin-top: 14px; padding: 10px; background: #1e293b; border: 1px solid #334155; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">બીજો પ્રશ્ન પૂછો</button>
+    </div>
+  </div>
+
+  <script>
+    const API_KEY = "AIzaSyDhL4UMtCEhJB7B6DYHbOZQywP_3zGL5L4";
+    let activeChatId = "";
+    let pageToken = "";
+    let chatPollTimer;
+    let pollDuration = 30;
+    let pollType = 'single';
+    let pollStartStamp = 0;
+    let clockInterval;
+    let collectedResponses = {};
+
+    function parseVideoId(url) {
+      const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|live\/))([\w-]{11})/);
+      return match ? match[1] : url.trim();
+    }
+
+    async function connectLiveStream() {
+      const input = document.getElementById('ytUrlInput').value.trim();
+      const vid = parseVideoId(input);
+
+      if (!vid) {
+        alert("કૃપા કરીને માન્ય YouTube લિંક અથવા Video ID દાખલ કરો!");
+        return;
+      }
+
+      document.getElementById('connectionStatus').innerText = "Connecting...";
+
+      try {
+        const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${vid}&key=${API_KEY}`);
+        const data = await res.json();
+
+        if (data.items && data.items.length > 0 && data.items[0].liveStreamingDetails) {
+          activeChatId = data.items[0].liveStreamingDetails.activeLiveChatId;
+          
+          if (activeChatId) {
+            document.getElementById('connectionStatus').innerHTML = "🟢 <span style='color: #22c55e;'>Connected to Live</span>";
+            document.getElementById('ytCard').style.display = 'none';
+            document.getElementById('pollSetupSection').style.display = 'block';
+          } else {
+            alert("આ વીડિયોમાં લાઈવ ચેટ સક્રિય નથી!");
+            document.getElementById('connectionStatus').innerText = "Chat Unavailable";
+          }
+        } else {
+          alert("લાઈવ સ્ટ્રીમ મળી નથી!");
+          document.getElementById('connectionStatus').innerText = "● Live Disconnected";
+        }
+      } catch (err) {
+        alert("કનેક્શન એરર: " + err.message);
+      }
+    }
+
+    function setPollType(type) {
+      pollType = type;
+      document.getElementById('btnSingle').classList.toggle('active', type === 'single');
+      document.getElementById('btnText').classList.toggle('active', type === 'text');
+    }
+
+    function selectTime(sec, el) {
+      pollDuration = sec;
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function startLivePoll() {
+      collectedResponses = {};
+      pollStartStamp = Date.now();
+      pageToken = "";
+
+      document.getElementById('pollSetupSection').style.display = 'none';
+      document.getElementById('liveSection').style.display = 'block';
+
+      document.getElementById('mcqAction').style.display = (pollType === 'single') ? 'block' : 'none';
+      document.getElementById('textAction').style.display = (pollType === 'text') ? 'block' : 'none';
+
+      chatPollTimer = setInterval(scanChatMessages, 1500);
+
+      let timeLeft = pollDuration;
+      if (pollDuration > 0) {
+        document.getElementById('timerDisplay').innerText = timeLeft + "s";
+        clockInterval = setInterval(() => {
+          timeLeft--;
+          document.getElementById('timerDisplay').innerText = timeLeft + "s";
+          if (timeLeft <= 0) {
+            clearInterval(clockInterval);
+            document.getElementById('chatReadingNotice').innerText = "⌛ સમય સમાપ્ત! સાચો જવાબ દાખલ કરો.";
+          }
+        }, 1000);
+      } else {
+        document.getElementById('timerDisplay').innerText = "∞";
+      }
+    }
+
+    async function scanChatMessages() {
+      if (!activeChatId) return;
+
+      let url = `https://www.googleapis.com/youtube/v3/liveChat/messages?liveChatId=${activeChatId}&part=snippet,authorDetails&key=${API_KEY}`;
+      if (pageToken) url += `&pageToken=${pageToken}`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        pageToken = data.nextPageToken;
+
+        if (data.items) {
+          data.items.forEach(i => {
+            const txt = i.snippet.displayMessage.trim();
+            const user = i.authorDetails.displayName;
+
+            if (!collectedResponses[user]) {
+              collectedResponses[user] = {
+                name: user,
+                text: txt,
+                time: Date.now() - pollStartStamp
+              };
+            }
+          });
+        }
+      } catch (e) {
+        console.error("Chat scan error:", e);
+      }
+    }
+
+    function finishPoll(ansParam) {
+      clearInterval(clockInterval);
+      clearInterval(chatPollTimer);
+
+      let finalCorrect = ansParam;
+      if (pollType === 'text') {
+        finalCorrect = document.getElementById('textCorrectVal').value.trim();
+        if (!finalCorrect) {
+          alert("કૃપા કરીને સાચો જવાબ દાખલ કરો!");
+          return;
+        }
+      }
+
+      document.getElementById('liveSection').style.display = 'none';
+      document.getElementById('resultSection').style.display = 'block';
+      document.getElementById('correctBadge').innerText = "Correct: " + finalCorrect;
+
+      const ratioContainer = document.getElementById('dynamicRatioContainer');
+      let winners = [];
+      const cleanTarget = finalCorrect.toLowerCase().replace(/\s+/g, '');
+
+      // 1. Single Choice (MCQ) Ratio Rendering
+      if (pollType === 'single') {
+        let counts = { A: 0, B: 0, C: 0, D: 0 };
+        let total = 0;
+
+        for (let u in collectedResponses) {
+          let ans = collectedResponses[u].text.toUpperCase();
+          if (counts[ans] !== undefined) {
+            counts[ans]++;
+            total++;
+          }
+          if (ans === finalCorrect) winners.push(collectedResponses[u]);
+        }
+
+        let ratioHtml = "";
+        ['A', 'B', 'C', 'D'].forEach(opt => {
+          let pct = total > 0 ? Math.round((counts[opt] / total) * 100) : 0;
+          let isCorrect = (opt === finalCorrect);
+          let barBg = isCorrect ? "#22c55e" : "#334155";
+          
+          ratioHtml += `
+            <div class="bar-row">
+              <div class="bar-bg">
+                <div class="bar-fill" style="width: ${pct}%; background: ${barBg};"></div>
+                <div class="bar-text">
+                  <span>Option ${opt} (${counts[opt]})</span>
+                  <span>${pct}%</span>
+                </div>
+              </div>
+            </div>`;
+        });
+        ratioContainer.innerHTML = ratioHtml;
+      } 
+      // 2. Text / Number Ratio Rendering (Correct vs Incorrect)
+      else {
+        let correctCount = 0;
+        let total = 0;
+
+        for (let u in collectedResponses) {
+          total++;
+          const cleanUser = collectedResponses[u].text.toLowerCase().replace(/\s+/g, '');
+          if (cleanUser === cleanTarget) {
+            correctCount++;
+            winners.push(collectedResponses[u]);
+          }
+        }
+
+        let incorrectCount = total - correctCount;
+        let correctPct = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+        let incorrectPct = total > 0 ? Math.round((incorrectCount / total) * 100) : 0;
+
+        ratioContainer.innerHTML = `
+          <div class="bar-row">
+            <div class="bar-bg">
+              <div class="bar-fill" style="width: ${correctPct}%; background: #22c55e;"></div>
+              <div class="bar-text">
+                <span>✅ Correct (${correctCount})</span>
+                <span>${correctPct}%</span>
+              </div>
+            </div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-bg">
+              <div class="bar-fill" style="width: ${incorrectPct}%; background: #ef4444;"></div>
+              <div class="bar-text">
+                <span>❌ Incorrect (${incorrectCount})</span>
+                <span>${incorrectPct}%</span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: #94a3b8; text-align: center; margin-top: 10px;">
+            કુલ રિસ્પોન્સ: <b>${total}</b>
+          </div>`;
+      }
+
+      // Leaderboard Rendering
+      winners.sort((a, b) => a.time - b.time);
+
+      let out = "";
+      const displayWinners = winners.slice(0, 10);
+
+      displayWinners.forEach((w, idx) => {
+        const rankNum = idx + 1;
+        out += `
+          <div class="rank-item rank-${rankNum}">
+            <div style="display: flex; align-items: center;">
+              <span class="rank-badge">${rankNum}</span>
+              <span style="font-weight: 600;">@${w.name}</span>
+            </div>
+            <span style="color: #38bdf8; font-weight: 700;">${(w.time / 1000).toFixed(2)}s</span>
+          </div>`;
+      });
+
+      document.getElementById('leaderboardBox').innerHTML = out || "<div style='color:#64748b;padding:12px;text-align:center;'>કોઈએ સાચો જવાબ નથી આપ્યો!</div>";
+    }
+
+    function resetForNewPoll() {
+      document.getElementById('resultSection').style.display = 'none';
+      document.getElementById('pollSetupSection').style.display = 'block';
+      document.getElementById('textCorrectVal').value = "";
+    }
+  </script>
+</body>
+</html>
